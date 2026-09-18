@@ -1,0 +1,224 @@
+# Traz as versões novas do sistema original para dentro deste fork — sozinho.
+#
+# POR QUE ISTO EXISTE
+# -------------------
+# Esta instalação roda um fork: o que acrescentamos aqui não existe nas versões
+# de quem escreveu o sistema. Sem este robô, a tela de atualização de quem
+# hospeda fica muda enquanto o original publica — e quem quisesse a novidade
+# teria de juntar os dois códigos à mão, versão a versão.
+#
+# O QUE ELE FAZ, E ONDE PARA
+# --------------------------
+# A cada hora: procura a maior versão do original que ainda não está aqui,
+# junta, RODA A SUÍTE, corta uma versão nossa e empurra a tag — que é o que
+# acende o aviso na barra lateral de quem hospeda.
+#
+# Ele para e abre um aviso (issue), em vez de decidir sozinho, em três casos:
+#   1. conflito em qualquer arquivo que não seja o CHANGELOG — código nosso e
+#      do original mexeram na mesma linha, e adivinhar aí quebra o produto;
+#   2. a versão do original pede ação de quem hospeda (`Requer atenção`);
+#   3. a suíte reprova depois de juntar.
+# Em todos, o repositório fica como estava: nada é empurrado pela metade.
+#
+# O TOKEN, E POR QUE ELE NÃO É OPCIONAL
+# -------------------------------------
+# Tag empurrada com o `GITHUB_TOKEN` padrão NÃO dispara outro workflow (regra do
+# GitHub, para evitar recursão). Como é a tag que dispara a publicação das
+# imagens, o robô com o token padrão criaria uma versão que o parque instalado
+# enxerga e não consegue baixar — o pior dos dois mundos. Por isso ele confere
+# `secrets.SYNC_TOKEN` (um Personal Access Token com `contents: write` e
+# `workflows: write`) ANTES de mexer em qualquer coisa, e avisa se faltar.
+name: Sincronizar com o original
+
+on:
+  schedule:
+    # De hora em hora, fora do minuto cheio: no minuto 0 a fila do GitHub é
+    # disputada por todo mundo e o agendamento atrasa mais.
+    - cron: "23 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  ORIGEM_URL: https://github.com/melgarafael/DeskcommCRM.git
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # O histórico inteiro: sem ele não há como juntar nem saber o que já
+          # está aqui. E o token do segredo, porque é ele que empurra a tag.
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN || github.token }}
+
+      - name: O robô tem o token que a publicação exige?
+        id: token
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEM: ${{ secrets.SYNC_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "$TEM" = "true" ]; then echo "ok=sim" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "ok=nao" >> "$GITHUB_OUTPUT"
+          titulo="Sincronização parada: falta o segredo SYNC_TOKEN"
+          if [ "$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')" = "0" ]; then
+            gh issue create --title "$titulo" --body "$(cat <<'TXT'
+O robô que traz as versões do sistema original está desligado por falta de um token.
+
+**Por que ele precisa de um:** uma tag empurrada com o token padrão do GitHub Actions não
+dispara a publicação das imagens. A versão apareceria na barra lateral de quem hospeda e o
+download falharia — pior do que não publicar.
+
+**Como ligar, uma vez só:**
+
+1. Crie um token em <https://github.com/settings/personal-access-tokens/new>
+   - *Repository access*: só este repositório
+   - *Permissions* → *Repository permissions*: **Contents: Read and write** e **Workflows: Read and write**
+2. Em **Settings → Secrets and variables → Actions → New repository secret** deste repositório,
+   crie o segredo com o nome `SYNC_TOKEN` e cole o token.
+
+Na próxima hora o robô roda sozinho. Para não esperar: **Actions → Sincronizar com o original → Run workflow**.
+TXT
+)"
+          fi
+
+      - name: Qual versão do original ainda não está aqui?
+        id: alvo
+        if: steps.token.outputs.ok == 'sim'
+        run: |
+          set -euo pipefail
+          git remote add origem "$ORIGEM_URL" 2>/dev/null || git remote set-url origem "$ORIGEM_URL"
+          git fetch --quiet --tags --no-tags origem 'refs/tags/v*:refs/tags/origem-v*'
+
+          # Só versões fechadas: `-` é pré-lançamento, e o parque instalado nunca
+          # recebe uma. `sort -V` ordena por número, não por texto (v1.9 < v1.10).
+          maior="$(git tag -l 'origem-v*' | sed 's/^origem-//' | grep -vE '-' | sort -V | tail -1 || true)"
+          if [ -z "$maior" ]; then echo "nenhuma versão no original — nada a fazer"; echo "fazer=nao" >> "$GITHUB_OUTPUT"; exit 0; fi
+
+          if git merge-base --is-ancestor "origem-${maior}" HEAD; then
+            echo "a ${maior} do original já está aqui — nada a fazer"
+            echo "fazer=nao" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          # A versão de origem que JÁ está aqui — serve só para dizer se o salto
+          # foi de correção ou de capacidade. Sem ela, assume-se o lado seguro.
+          anterior=""
+          for t in $(git tag -l 'origem-v*' | sed 's/^origem-//' | grep -vE '-' | sort -Vr); do
+            if git merge-base --is-ancestor "origem-${t}" HEAD 2>/dev/null; then anterior="$t"; break; fi
+          done
+
+          echo "versão a trazer: ${maior} (a que já está aqui: ${anterior:-nenhuma})"
+          { echo "fazer=sim"; echo "versao=${maior}"; echo "anterior=${anterior}"; } >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/preparar-node
+        if: steps.alvo.outputs.fazer == 'sim'
+        # Passo de composite action não aceita `timeout-minutes` — o teto mora aqui.
+        timeout-minutes: 5
+
+      - name: Juntar o código do original
+        id: juntar
+        if: steps.alvo.outputs.fazer == 'sim'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSAO: ${{ steps.alvo.outputs.versao }}
+        run: |
+          set -euo pipefail
+          git config user.name  'sincronizador'
+          git config user.email 'sincronizador@users.noreply.github.com'
+
+          if ! git merge --no-commit --no-ff "origem-${VERSAO}"; then :; fi
+          conflitos="$(git diff --name-only --diff-filter=U || true)"
+
+          # O CHANGELOG conflita SEMPRE (as duas versões mais novas disputam o
+          # topo) e a resolução é determinística. Qualquer outro arquivo em
+          # conflito significa que o original mexeu onde nós mexemos — aí quem
+          # decide é gente.
+          outros="$(printf '%s\n' "$conflitos" | grep -v '^CHANGELOG\.md$' | grep -v '^$' || true)"
+          if [ -n "$outros" ]; then
+            git merge --abort || true
+            titulo="Sincronização da ${VERSAO}: conflito que o robô não resolve"
+            if [ "$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')" = "0" ]; then
+              gh issue create --title "$titulo" --body "$(printf 'O original mexeu nos mesmos lugares que esta instalação, nestes arquivos:\n\n```\n%s\n```\n\nNada foi alterado: o merge foi desfeito e a `main` está como estava. Resolver isso é trabalho de gente — depois de resolvido e empurrado, o robô volta a andar sozinho.\n' "$outros")"
+            fi
+            echo "parou=conflito" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          if printf '%s\n' "$conflitos" | grep -q '^CHANGELOG\.md$'; then
+            pnpm exec tsx scripts/sincronizar-origem.ts resolver-changelog
+            git add CHANGELOG.md
+          fi
+          git commit --no-edit --quiet
+          echo "parou=nao" >> "$GITHUB_OUTPUT"
+
+      - name: Escrever o aviso de versão (ou parar, se pedir gente)
+        id: fragmento
+        if: steps.juntar.outputs.parou == 'nao'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSAO: ${{ steps.alvo.outputs.versao }}
+          ANTERIOR: ${{ steps.alvo.outputs.anterior }}
+        run: |
+          set -euo pipefail
+          set +e
+          saida="$(pnpm exec tsx scripts/sincronizar-origem.ts fragmento "$VERSAO" "$ANTERIOR" 2>&1)"; rc=$?
+          set -e
+          printf '%s\n' "$saida"
+          if [ "$rc" = "3" ]; then
+            titulo="Sincronização da ${VERSAO}: precisa de uma decisão humana"
+            if [ "$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')" = "0" ]; then
+              gh issue create --title "$titulo" --body "$(printf 'O robô juntou o código da **%s** do original, mas não vai publicar sozinho:\n\n> %s\n\nNada foi empurrado — a `main` está como estava.\n' "$VERSAO" "$saida")"
+            fi
+            echo "parou=revisao" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          [ "$rc" = "0" ] || exit "$rc"
+          git add .changes
+          echo "parou=nao" >> "$GITHUB_OUTPUT"
+
+      - name: A suíte aprova o código já juntado?
+        id: suite
+        if: steps.fragmento.outputs.parou == 'nao'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSAO: ${{ steps.alvo.outputs.versao }}
+        run: |
+          set -euo pipefail
+          set +e
+          ( pnpm typecheck && pnpm lint && pnpm lint:channels && pnpm lint:role-rank \
+            && pnpm test:unit && pnpm test:shell ) > /tmp/suite.log 2>&1
+          rc=$?
+          set -e
+          tail -40 /tmp/suite.log
+          if [ "$rc" != "0" ]; then
+            titulo="Sincronização da ${VERSAO}: a suíte reprovou depois de juntar"
+            if [ "$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')" = "0" ]; then
+              gh issue create --title "$titulo" --body "$(printf 'Juntar a **%s** do original com o que esta instalação acrescenta deixou a suíte vermelha. Nada foi empurrado.\n\nFim da saída:\n\n```\n%s\n```\n' "$VERSAO" "$(tail -60 /tmp/suite.log)")"
+            fi
+            echo "parou=suite" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "parou=nao" >> "$GITHUB_OUTPUT"
+
+      - name: Cortar a versão e publicar
+        if: steps.suite.outputs.parou == 'nao'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSAO: ${{ steps.alvo.outputs.versao }}
+        run: |
+          set -euo pipefail
+          pnpm exec tsx scripts/cortar-release.ts --escrever
+          nova="$(pnpm exec tsx scripts/cortar-release.ts --versao-do-changelog)"
+          git add CHANGELOG.md .changes
+          git commit --quiet -m "release(${nova}): a versão montada a partir dos fragmentos declarados"
+
+          # A `main` primeiro: a trava `a-tag-veio-da-main` da publicação recusa
+          # tag cujo commit a `main` não contenha.
+          git push origin HEAD:main
+          git tag -a "v${nova}" -m "v${nova}"
+          git push origin "v${nova}"
+          echo "publicado: v${nova} (traz a ${VERSAO} do original)" >> "$GITHUB_STEP_SUMMARY"

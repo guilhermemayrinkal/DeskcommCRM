@@ -207,6 +207,15 @@ const GATILHO_ESPERADO: Record<string, { condicao: string | null; efeito: string
       "(`vars.RELOGIO_LIGADO`), não uma adaptação de fork — mas ela fica no mapa para " +
       "que trocar a variável por outra coisa continue passando por revisão.",
   },
+  "sincronizar-origem.yml::sincronizar": {
+    condicao: null,
+    efeito:
+      "Este job é quem traz as versões do sistema original para dentro deste fork e corta a " +
+      "versão que as embrulha. Desligá-lo faz a instalação congelar no que ela tem hoje, sem " +
+      "erro em lugar nenhum: a barra lateral de quem hospeda simplesmente nunca mais oferece " +
+      "atualização. É SEM `if:` de propósito — as guardas dele são de passo (falta de token, " +
+      "conflito, aviso de atenção, suíte vermelha), e cada uma abre um aviso em vez de calar.",
+  },
 };
 
 interface JobLido {
