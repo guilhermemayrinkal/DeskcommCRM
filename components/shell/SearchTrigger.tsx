@@ -21,6 +21,7 @@ export function SearchTrigger() {
         size="sm"
         className="gap-2 text-muted-foreground"
         onClick={() => setOpen(true)}
+        data-tour="busca"
       >
         <MagnifyingGlass size={14} aria-hidden />
         <span className="hidden md:inline">{t("Buscar...")}</span>

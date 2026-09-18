@@ -870,6 +870,43 @@
   }
 }
 
+/* ---- Passeio guiado · o card entra deslocando-se, não aparecendo ----------
+   Mesma família do ds-modal-in (07-motion-language): fade + 8px de subida em
+   --duration-slow. O holofote não anima opacidade — ele já está na tela quando
+   o card entra; o que se move é o RECORTE, por transition nas coordenadas,
+   para o olho seguir de um alvo ao outro em vez de o fundo piscar. */
+@keyframes deskcomm-tour-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour-card-in {
+  animation: deskcomm-tour-in var(--duration-slow) var(--ease-out) 1;
+}
+
+.tour-holofote {
+  transition:
+    top var(--duration-slow) var(--ease-out),
+    left var(--duration-slow) var(--ease-out),
+    width var(--duration-slow) var(--ease-out),
+    height var(--duration-slow) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-card-in {
+    animation: none;
+  }
+  .tour-holofote {
+    transition: none;
+  }
+}
+
 /* ---- Agenda · a coluna de horários que desliza para dentro ----------------
    O painel de marcação tem três tempos (escolher dia → escolher horário →
    confirmar) e a coluna de horários NÃO existe no primeiro. Quando o dia é

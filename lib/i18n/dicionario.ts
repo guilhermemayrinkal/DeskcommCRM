@@ -9246,6 +9246,48 @@ export const DICIONARIO: Traducoes = {
   'A origem aparece na ficha do contato e no filtro "Site (landing page)" da lista de contatos.': {
     es: 'El origen aparece en la ficha del contacto y en el filtro "Sitio (landing page)" de la lista de contactos.',
   },
+
+  // ─── Passeio guiado pela interface (components/shell/tour) ────────────────
+  "Um passeio de dois minutos": { es: "Un recorrido de dos minutos" },
+  "Antes de começar, vale saber onde cada coisa mora. São poucos passos e você pode pular quando quiser — dá para voltar a este passeio pelo menu do seu perfil.": {
+    es: "Antes de empezar, vale saber dónde vive cada cosa. Son pocos pasos y puedes saltarlo cuando quieras — se puede volver a este recorrido desde el menú de tu perfil.",
+  },
+  "Tudo que existe está neste menu": { es: "Todo lo que existe está en este menú" },
+  "Cinco grupos, na ordem do seu dia: o atendimento, a venda, o funcionário de IA, os canais ligados e os números. Não precisa decorar — a busca no topo encontra qualquer tela pelo nome.": {
+    es: "Cinco grupos, en el orden de tu día: la atención, la venta, el empleado de IA, los canales conectados y los números. No hace falta memorizar — la búsqueda de arriba encuentra cualquier pantalla por el nombre.",
+  },
+  "Onde a venda anda": { es: "Por dónde va la venta" },
+  "Cada cliente vira um cartão que anda de coluna conforme a conversa avança. Quem é, o que ficou combinado e o que falta fazer ficam no mesmo grupo.": {
+    es: "Cada cliente se convierte en una tarjeta que cambia de columna a medida que avanza la conversación. Quién es, qué quedó acordado y qué falta hacer están en el mismo grupo.",
+  },
+  "O funcionário de IA": { es: "El empleado de IA" },
+  "É aqui que você monta e acompanha quem atende com você: os agentes, o retorno a quem sumiu e quem decide o que vai para quem.": {
+    es: "Aquí montas y acompañas a quien atiende contigo: los agentes, el retorno a quien desapareció y quién decide qué va para quién.",
+  },
+  "Não decore o menu": { es: "No memorices el menú" },
+  "Esta busca encontra qualquer tela pelo nome. No teclado: Ctrl K, ou ⌘K no Mac.": {
+    es: "Esta búsqueda encuentra cualquier pantalla por el nombre. En el teclado: Ctrl K, o ⌘K en Mac.",
+  },
+  "Quando algo precisa de você": { es: "Cuando algo te necesita" },
+  "Conversas paradas, pedidos de ajuda do agente e conexões caídas chegam aqui. O número no sino é o que está esperando.": {
+    es: "Conversaciones detenidas, pedidos de ayuda del agente y conexiones caídas llegan aquí. El número en la campana es lo que está esperando.",
+  },
+  "Sua conta — e este passeio": { es: "Tu cuenta — y este recorrido" },
+  "Idioma, tema e saída ficam aqui. Para rever este passeio, use Conhecer o sistema neste mesmo menu.": {
+    es: "Idioma, tema y salida están aquí. Para volver a ver este recorrido, usa Conocer el sistema en este mismo menú.",
+  },
+  "É isso": { es: "Eso es todo" },
+  "O resto você descobre usando. Se não achar uma tela, a busca no topo acha; se o agente travar, ele pede ajuda nos alertas.": {
+    es: "El resto lo descubres usando. Si no encuentras una pantalla, la búsqueda de arriba la encuentra; si el agente se traba, pide ayuda en las alertas.",
+  },
+  "Passo {n} de {total}": { es: "Paso {n} de {total}" },
+  "Próximo": { es: "Siguiente" },
+  // "Fechar" já existe (linha ~511, como identificador sem aspas).
+  "Conhecer o sistema": { es: "Conocer el sistema" },
+  "Passeio guiado pelo sistema": { es: "Recorrido guiado por el sistema" },
+  "Não conseguimos guardar o passeio. Ele pode aparecer de novo no próximo acesso.": {
+    es: "No pudimos guardar el recorrido. Puede volver a aparecer en el próximo acceso.",
+  },
 };
 
 /**

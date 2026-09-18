@@ -7,6 +7,7 @@ import { useSinalDePresenca } from "@/hooks/atendimento/useSinalDePresenca";
 import { useInboundMessageAlerts } from "@/hooks/notifications/useInboundMessageAlerts";
 import { useCrmAlerts } from "@/hooks/notifications/useCrmAlerts";
 import { useNotifyOpenFromServiceWorker } from "@/lib/notifications/notify_open";
+import { TourGuiado } from "@/components/shell/tour/TourGuiado";
 
 interface AppShellProps {
   sidebarCollapsed: boolean;
@@ -60,6 +61,13 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
         <TopBar />
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
+      {/*
+        Mora no shell, e não numa tela, porque o shell é o que NÃO remonta entre
+        as telas do /app: a pessoa pode clicar no item iluminado, navegar, e o
+        passeio segue do mesmo passo. Renderiza num portal, então a posição aqui
+        na árvore só define de quem ele lê `useAuth`.
+      */}
+      <TourGuiado />
     </div>
   );
 }

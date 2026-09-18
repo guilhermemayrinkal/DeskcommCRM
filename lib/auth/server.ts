@@ -234,6 +234,7 @@ export const loadAuthUser = cache(async (): Promise<AuthUser | null> => {
     locale ?? support?.locale ?? (await localeDaOrgAtiva(memberships)),
   );
   const timezone = (user.user_metadata?.timezone as string | undefined) ?? null;
+  const tourConcluidoEm = (user.user_metadata?.tour_concluido_em as string | undefined) ?? null;
 
   return {
     id: user.id,
@@ -244,6 +245,7 @@ export const loadAuthUser = cache(async (): Promise<AuthUser | null> => {
     locale,
     idioma,
     timezone,
+    tour_concluido_em: tourConcluidoEm,
     organizations: memberships,
     support,
   };

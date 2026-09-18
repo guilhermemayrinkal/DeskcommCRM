@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { SeletorDeIdioma } from "@/components/shell/SeletorDeIdioma";
 import { useT } from "@/hooks/i18n/useT";
-import { SignOut } from "@/lib/ui/icons";
+import { SignOut, Signpost } from "@/lib/ui/icons";
+import { pedirParaAbrirTour } from "@/lib/tour/evento";
 
 function initials(name: string | null, email: string): string {
   if (name && name.trim()) {
@@ -35,7 +36,7 @@ export function UserMenu() {
       <ThemeToggle />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("Menu do usuário")}>
+          <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("Menu do usuário")} data-tour="usuario">
             <Avatar className="h-8 w-8">
               {user.avatar_url && <AvatarImage src={user.avatar_url} alt="" />}
               <AvatarFallback>{initials(user.full_name, user.email)}</AvatarFallback>
@@ -50,6 +51,15 @@ export function UserMenu() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {/*
+            O passeio guiado abre sozinho no primeiro acesso e nunca mais. Quem
+            quiser revê-lo precisa de uma porta — e ela fica aqui, no menu que o
+            último passo do próprio passeio aponta.
+          */}
+          <DropdownMenuItem onClick={() => pedirParaAbrirTour()}>
+            <Signpost size={16} className="mr-2" aria-hidden />
+            {t("Conhecer o sistema")}
+          </DropdownMenuItem>
           <DropdownMenuItem disabled={isPending} onClick={() => startTransition(async () => { await signOut(); })}>
             <SignOut size={16} className="mr-2" aria-hidden />
             {t("Sair")}
