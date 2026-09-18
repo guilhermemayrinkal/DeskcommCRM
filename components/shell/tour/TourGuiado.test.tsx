@@ -158,6 +158,22 @@ describe("passeio guiado", () => {
     expect(concluirTour).toHaveBeenCalledWith("concluido", expect.any(Number));
   });
 
+  it("alvo escondido por um ancestral (barra lateral no celular) é pulado como se não existisse", () => {
+    // Esconde a barra do jeito que o shell esconde no celular: no PAI, não no <nav>.
+    const barra = fixture.querySelector("nav")!;
+    const pai = document.createElement("div");
+    pai.style.display = "none";
+    barra.replaceWith(pai);
+    pai.appendChild(barra);
+
+    render(<TourGuiado />);
+    abrirSozinho();
+    seta("ArrowRight");
+    // Menu e Inbox estão escondidos; o próximo alvo visível é a busca do topo.
+    expect(screen.queryByText("Tudo que existe está neste menu")).toBeNull();
+    expect(screen.getByText("Não decore o menu")).toBeTruthy();
+  });
+
   it("o alvo iluminado fica livre para clique: o holofote não captura eventos", () => {
     render(<TourGuiado />);
     abrirSozinho();

@@ -38,10 +38,30 @@ const ATRASO_DA_ABERTURA_MS = 700;
 const FOLGA_DO_HOLOFOTE = 6;
 const LARGURA_DO_CARD = 360;
 
+/**
+ * Visível = nenhum ancestral com `display: none` e o próprio elemento não
+ * escondido. Sobe pelos ancestrais porque é assim que a barra lateral some no
+ * celular: o `<nav>` continua no DOM, quem tem `hidden md:block` é o pai. Sem
+ * esta checagem, `querySelector` acha o elemento, `getBoundingClientRect`
+ * devolve zeros, e o passeio aponta para o canto vazio da tela em vez de pular.
+ *
+ * `getComputedStyle` e não `offsetParent`/`getClientRects`: é o único critério
+ * que o browser e o jsdom respondem igual (o jsdom não tem layout, mas honra
+ * `style="display:none"` — que é como o teste esconde um alvo).
+ */
+function visivel(el: HTMLElement): boolean {
+  for (let n: HTMLElement | null = el; n; n = n.parentElement) {
+    const estilo = window.getComputedStyle(n);
+    if (estilo.display === "none" || (n === el && estilo.visibility === "hidden")) return false;
+  }
+  return true;
+}
+
 function encontrarAlvo(passo: PassoDoTour): HTMLElement | null {
   for (const css of passo.alvos) {
-    const el = document.querySelector<HTMLElement>(css);
-    if (el) return el;
+    for (const el of document.querySelectorAll<HTMLElement>(css)) {
+      if (visivel(el)) return el;
+    }
   }
   return null;
 }
