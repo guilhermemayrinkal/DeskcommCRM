@@ -59,6 +59,14 @@ const ESCRITA_JUSTIFICADA: Record<string, string> = {
   "acolhida.yml::pull-requests: write":
     "comenta a acolhida no PR de fork; é o ÚNICO escopo do workflow (o bloco zera o resto), " +
     "e o job não faz checkout nem usa action nenhuma — ver tests/unit/acolhida-nao-toca-no-fork.test.ts",
+  "sincronizar-origem.yml::contents: write":
+    "empurra o merge do sistema original, o commit de release e a tag — é o ato inteiro do robô. " +
+    "Sem escrita ele juntaria o código e não teria onde pôr, e a barra lateral de quem hospeda " +
+    "continuaria muda",
+  "sincronizar-origem.yml::issues: write":
+    "abre o aviso quando o robô NÃO publica (conflito fora do CHANGELOG, versão de origem que " +
+    "pede ação, suíte vermelha). É o que troca uma parada silenciosa por um pedido de ajuda " +
+    "visível — sem isto, o robô falharia sozinho e ninguém saberia",
 };
 
 interface Workflow {
