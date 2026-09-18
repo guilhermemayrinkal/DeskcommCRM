@@ -133,6 +133,13 @@ export interface AuthUser {
    * o anti-pattern "tela oferece o que o código ignora".
    */
   timezone?: string | null;
+  /**
+   * Quando esta pessoa concluiu (ou pulou) o passeio guiado pela interface, de
+   * `user_metadata.tour_concluido_em`. Vazio = nunca viu, e o passeio abre
+   * sozinho no próximo `/app`. É preferência da PESSOA, como `locale`: quem
+   * trabalha em duas organizações aprende a interface uma vez só.
+   */
+  tour_concluido_em?: string | null;
   organizations: UserOrgMembership[];
 }
 
