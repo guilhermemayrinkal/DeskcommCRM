@@ -8,6 +8,66 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.0.0] — 2026-09-18
+
+### ⚠️ Requer atenção
+
+- **Este fork passa a ter a própria linha de versões, a partir da 2.0.0** Numa VPS instalada antes desta versão, o clone precisa apontar para este
+  repositório, senão o agente não enxerga as tags novas e a tela nunca oferece
+  a atualização:
+
+  ```bash
+  cd /opt/deskcommcrm
+  git remote set-url origin https://github.com/guilhermemayrinkal/DeskcommCRM.git
+  git tag -d v1.35.0 2>/dev/null   # tag do repositório original trazida antes da troca; não é nossa
+  git fetch --tags origin
+  ```
+
+  Feito isso, `bash hostgator-setup-kit/update.sh` (ou o botão "Atualizar" da
+  tela) instala a 2.0.0 normalmente.
+
+### Adicionado
+
+- **Um passeio guiado apresenta a interface no primeiro acesso** Quem entrava no sistema pela primeira vez caía numa caixa de conversas vazia,
+  diante de um menu com cinco grupos e nomes que ainda não reconhecia — "Inbox",
+  "Radar", "Roteadores". Descobrir o que cada coisa faz ficava por conta da
+  curiosidade, e a maioria não volta para explorar menu.
+
+  Agora, no primeiro acesso ao `/app`, um passeio de poucos passos ilumina a
+  barra lateral grupo a grupo e a barra superior, dizendo o que cada tela faz —
+  com as mesmas frases do menu e do fim do onboarding, não uma redação nova. Só
+  aparece o que o papel da pessoa enxerga: um atendente não é apresentado a
+  "Agentes". O elemento iluminado continua clicável, e o passeio segue de onde
+  estava se a pessoa navegar.
+
+  Abre uma vez por pessoa (concluído ou pulado, não volta sozinho). Para rever,
+  o item **Conhecer o sistema** fica no menu do usuário, no canto superior
+  direito. Nada a configurar: não há variável nova no `.env` nem migração.
+
+### Alterado
+
+- **Este fork passa a ter a própria linha de versões, a partir da 2.0.0** Até aqui a instalação seguia a numeração e as tags do repositório original
+  (`melgarafael/DeskcommCRM`), que hoje está na 1.35.0. A partir desta versão o
+  fork tem a própria linha — 2.x — para que uma versão nossa nunca tenha o mesmo
+  número de uma versão do autor com conteúdo diferente. As atualizações pela tela
+  passam a entregar as versões deste fork; mudanças do repositório original
+  entram aqui quando forem mescladas e cortadas numa versão nossa.
+
+- **As imagens e as atualizações passam a vir deste repositório** Esta instalação roda um fork do DeskcommCRM. Até aqui, o botão "Atualizar" e o
+  kit apontavam para as imagens e as tags do repositório original — e uma
+  atualização substituiria em silêncio o que este fork acrescenta.
+
+  Agora o namespace das imagens (`IMG_NS`), os padrões do `docker-compose`, o
+  exemplo de `.env`, os rótulos de origem dos Dockerfiles e os URLs de clone do
+  kit apontam para `github.com/guilhermemayrinkal/DeskcommCRM` e
+  `ghcr.io/guilhermemayrinkal`. O CI deste fork publica as três imagens a cada
+  tag `vX.Y.Z`; o `update.sh` passa a puxá-las daqui.
+
+  Para quem instalou antes desta versão: o clone da VPS precisa ter o `origin`
+  apontando para este repositório (`git remote set-url origin
+  https://github.com/guilhermemayrinkal/DeskcommCRM.git`) — sem isso o
+  `agent.sh` não enxerga as tags novas. Nada muda no comportamento do CRM.
+
 ## [1.34.0] — 2026-09-18
 
 ### Adicionado
@@ -5433,7 +5493,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/melgarafael/DeskcommCRM/compare/v1.34.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v1.34.0...v2.0.0
 [1.34.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.33.0...v1.34.0
 [1.33.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.32.1...v1.33.0
 [1.32.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.32.0...v1.32.1
