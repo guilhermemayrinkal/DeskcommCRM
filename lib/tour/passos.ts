@@ -238,7 +238,20 @@ export function deveAbrirSozinho(
   pessoa: { tour_concluido_em?: string | null; support?: unknown },
   temOrganizacao: boolean,
   pathname: string | null,
+  sessaoAutomatizada = false,
 ): boolean {
+  // Navegador dirigido por robô (Playwright) nunca vê o passeio sozinho.
+  //
+  // Não é conveniência: a suíte e2e entra sempre com gente RECÉM-CRIADA, que por
+  // definição nunca viu o passeio — então ele abria por cima de toda tela e
+  // duplicava o que os testes procuram. Medido no e2e de 20/09/2026: cinco
+  // partes vermelhas com `strict mode violation: getByRole('dialog') resolved to
+  // 2 elements` e `button "Fechar" resolved to 2 elements`, além de cliques
+  // batendo no holofote e estourando o tempo.
+  //
+  // Suprime só a abertura AUTOMÁTICA: "Conhecer o sistema", no menu, continua
+  // abrindo em qualquer sessão — inclusive num teste que queira exercitá-lo.
+  if (sessaoAutomatizada) return false;
   if (!temOrganizacao) return false;
   if (pessoa.support) return false;
   if (pessoa.tour_concluido_em) return false;

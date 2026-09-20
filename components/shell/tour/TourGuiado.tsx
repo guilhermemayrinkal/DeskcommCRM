@@ -149,7 +149,10 @@ export function TourGuiado() {
   // Abre sozinho, uma vez por montagem, se esta pessoa ainda não viu.
   useEffect(() => {
     if (jaAbriuSozinho.current) return;
-    if (!deveAbrirSozinho(user, activeOrg !== null, pathname)) return;
+    // `navigator.webdriver` é o sinal padrão de sessão dirigida por automação —
+    // true no Playwright, false em navegador de gente. Ver `deveAbrirSozinho`.
+    const automatizada = typeof navigator !== "undefined" && navigator.webdriver === true;
+    if (!deveAbrirSozinho(user, activeOrg !== null, pathname, automatizada)) return;
     if (passos.length < 2) return;
     jaAbriuSozinho.current = true;
     const timer = window.setTimeout(abrir, ATRASO_DA_ABERTURA_MS);

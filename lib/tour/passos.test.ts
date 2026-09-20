@@ -96,6 +96,12 @@ describe("abrir sozinho", () => {
     expect(deveAbrirSozinho({ ...nova, support: { id: "s" } }, true, "/app/inbox")).toBe(false);
   });
 
+  it("não abre sozinho em sessão dirigida por automação — o e2e entra com gente nova toda vez", () => {
+    expect(deveAbrirSozinho(nova, true, "/app/inbox", true)).toBe(false);
+    // E o padrão continua sendo o navegador de gente.
+    expect(deveAbrirSozinho(nova, true, "/app/inbox")).toBe(true);
+  });
+
   it("não abre sem organização ativa nem fora do /app", () => {
     expect(deveAbrirSozinho(nova, false, "/app/inbox")).toBe(false);
     expect(deveAbrirSozinho(nova, true, "/onboarding/welcome")).toBe(false);
