@@ -8,6 +8,20 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.2.1] — 2026-09-19
+
+### Corrigido
+
+- **O passeio guiado não abre mais por cima da suíte de ponta a ponta** A suíte de ponta a ponta entra sempre com gente recém-criada — que, por
+  definição, nunca viu o passeio. Ele abria por cima de toda tela e duplicava o
+  que os testes procuram: cinco partes ficaram vermelhas com `dialog` e botão
+  `Fechar` aparecendo duas vezes, além de cliques batendo no holofote.
+
+  Agora a abertura automática não acontece em navegador dirigido por robô. Nada
+  muda para quem usa o sistema: no primeiro acesso o passeio abre como antes, e
+  o item **Conhecer o sistema**, no menu do usuário, continua abrindo em qualquer
+  situação.
+
 ## [2.2.0] — 2026-09-19
 
 ### Alterado
@@ -6758,7 +6772,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v1.34.0...v2.0.0
