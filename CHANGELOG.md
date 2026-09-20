@@ -8,6 +8,30 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.2.0] — 2026-09-19
+
+### Alterado
+
+- **Traz a versão 1.40.0 do sistema original** Esta versão junta o que o sistema original publicou na 1.40.0 com o que
+  esta instalação acrescenta por conta própria. O que mudou lá está escrito na
+  seção **1.40.0** deste mesmo changelog, logo abaixo, por quem fez as
+  mudanças.
+
+  Nada a configurar: a atualização é a de sempre.
+
+### Corrigido
+
+- **O robô de sincronização não morre mais sem conseguir avisar** Quando ele parava por conflito, a tentativa de abrir o aviso podia falhar — e
+  falhava, porque este repositório está com as issues desabilitadas. O robô morria
+  ali, sem publicar nada e sem dizer por quê: sete execuções seguidas falharam em
+  silêncio, e quem percebeu foi a pessoa, notando que a versão nova não aparecia
+  na tela.
+
+  Agora o aviso sai num passo só, no fim, e o resumo da execução sempre o recebe —
+  ele não depende de permissão nenhuma. Se a issue não puder ser criada, o robô
+  reprova de propósito: falha de execução agendada é a única coisa que o GitHub
+  avisa por e-mail, e um robô mudo é pior que um vermelho.
+
 ## [2.1.0] — 2026-09-18
 
 ### Adicionado
@@ -6734,7 +6758,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.1.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v1.34.0...v2.0.0
 [1.40.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.39.0...v1.40.0
