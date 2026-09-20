@@ -179,7 +179,10 @@ export function fragmentoDeSincronizacao(
 ): FragmentoDeSincronizacao {
   const versao = versaoDeOrigem.replace(/^v/, "");
   return {
-    arquivo: `versao-de-origem-${versao}.md`,
+    // Os pontos da versão viram traços: `fragmentos-de-release.test.ts` cobra
+    // kebab-case puro no nome do arquivo (`/^[a-z0-9][a-z0-9-]*\.md$/`), e um
+    // `1.40.0` no meio do nome reprova o corte da versão inteira.
+    arquivo: `versao-de-origem-${versao.replace(/\./g, "-")}.md`,
     conteudo: [
       "---",
       `impacto: ${impacto}`,

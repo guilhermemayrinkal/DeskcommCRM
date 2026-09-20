@@ -13,12 +13,25 @@
 # junta, RODA A SUÍTE, corta uma versão nossa e empurra a tag — que é o que
 # acende o aviso na barra lateral de quem hospeda.
 #
-# Ele para e abre um aviso (issue), em vez de decidir sozinho, em três casos:
+# Ele para, em vez de decidir sozinho, em três casos:
 #   1. conflito em qualquer arquivo que não seja o CHANGELOG — código nosso e
 #      do original mexeram na mesma linha, e adivinhar aí quebra o produto;
 #   2. a versão do original pede ação de quem hospeda (`Requer atenção`);
 #   3. a suíte reprova depois de juntar.
 # Em todos, o repositório fica como estava: nada é empurrado pela metade.
+#
+# COMO ELE AVISA — E POR QUE ISSO É UM STEP SÓ, NO FIM
+# ----------------------------------------------------
+# Medido em 19/09/2026, com o robô no ar: as issues estavam DESABILITADAS neste
+# repositório, `gh issue list` saiu com erro, o `set -e` matou o step e o robô
+# morreu SEM CONSEGUIR DIZER que tinha parado. Sete execuções seguidas falharam
+# em silêncio, e quem percebeu foi a pessoa, notando que a versão não aparecia.
+#
+# Daí a forma de hoje: quem para só ESCREVE o aviso em arquivo e sai com bem; um
+# único step no fim publica. Ele tenta a issue, e quando não dá (issues
+# desabilitadas, permissão, indisponibilidade) cai no resumo da execução e
+# REPROVA o job de propósito — porque falha de workflow agendado é a única coisa
+# que o GitHub avisa por e-mail ao dono, e um robô mudo é pior que um vermelho.
 #
 # O TOKEN, E POR QUE ELE NÃO É OPCIONAL
 # -------------------------------------
@@ -31,13 +44,12 @@
 #
 # NENHUM HEREDOC AQUI DENTRO, E A RAZÃO É CARA
 # --------------------------------------------
-# O corpo de um `run: |` é um bloco literal de YAML: a indentação é que diz
-# onde ele acaba. Um `<<'TXT'` cujo conteúdo começa na coluna 0 — que é como se
+# O corpo de um `run: |` é um bloco literal de YAML: a indentação é que diz onde
+# ele acaba. Um `<<'TXT'` cujo conteúdo começa na coluna 0 — que é como se
 # escreve heredoc em bash — ENCERRA o bloco ali, e o arquivo inteiro vira um
 # workflow inválido. O GitHub então registra o workflow pelo caminho do arquivo,
 # perde os gatilhos (`workflow_dispatch` some) e cria um run que falha sem log
-# de job nenhum. Texto de várias linhas aqui se monta com `printf` para um
-# arquivo e sai por `--body-file`.
+# de job nenhum. Texto de várias linhas aqui se monta com `printf`.
 name: Sincronizar com o original
 
 on:
@@ -52,6 +64,8 @@ permissions:
 
 env:
   ORIGEM_URL: https://github.com/melgarafael/DeskcommCRM.git
+  AVISO_TITULO: /tmp/aviso-titulo.txt
+  AVISO_CORPO: /tmp/aviso-corpo.md
 
 jobs:
   sincronizar:
@@ -71,15 +85,12 @@ jobs:
       - name: O robô tem o token que a publicação exige?
         id: token
         env:
-          GH_TOKEN: ${{ github.token }}
           TEM: ${{ secrets.SYNC_TOKEN != '' }}
         run: |
           set -euo pipefail
           if [ "$TEM" = "true" ]; then echo "ok=sim" >> "$GITHUB_OUTPUT"; exit 0; fi
           echo "ok=nao" >> "$GITHUB_OUTPUT"
-          titulo="Sincronização parada: falta o segredo SYNC_TOKEN"
-          abertas="$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')"
-          if [ "$abertas" != "0" ]; then echo "aviso já está aberto — não repito"; exit 0; fi
+          printf '%s' "Sincronização parada: falta o segredo SYNC_TOKEN" > "$AVISO_TITULO"
           {
             printf '%s\n\n' "O robô que traz as versões do sistema original está desligado por falta de um token."
             printf '%s\n\n' "**Por que ele precisa de um:** uma tag empurrada com o token padrão do GitHub Actions não dispara a publicação das imagens. A versão apareceria na barra lateral de quem hospeda e o download falharia — pior do que não publicar."
@@ -88,9 +99,8 @@ jobs:
             printf '%s\n' "   - *Repository access*: somente este repositório"
             printf '%s\n\n' "   - *Permissions* → *Repository permissions*: **Contents: Read and write** e **Workflows: Read and write**"
             printf '%s\n\n' "2. Em **Settings → Secrets and variables → Actions** deste repositório, crie o segredo \`SYNC_TOKEN\` e cole o token."
-            printf '%s\n' "Na próxima hora o robô roda sozinho. Para não esperar: **Actions → Sincronizar com o original → Run workflow**."
-          } > /tmp/aviso-token.md
-          gh issue create --title "$titulo" --body-file /tmp/aviso-token.md
+            printf '%s\n' "Depois disso o robô roda sozinho na hora seguinte."
+          } > "$AVISO_CORPO"
 
       - name: Qual versão do original ainda não está aqui?
         id: alvo
@@ -134,7 +144,6 @@ jobs:
         id: juntar
         if: steps.alvo.outputs.fazer == 'sim'
         env:
-          GH_TOKEN: ${{ github.token }}
           VERSAO: ${{ steps.alvo.outputs.versao }}
         run: |
           set -euo pipefail
@@ -151,16 +160,12 @@ jobs:
           outros="$(printf '%s\n' "$conflitos" | grep -v '^CHANGELOG\.md$' | grep -v '^$' || true)"
           if [ -n "$outros" ]; then
             git merge --abort || true
-            titulo="Sincronização da ${VERSAO}: conflito que o robô não resolve"
-            abertas="$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')"
-            if [ "$abertas" = "0" ]; then
-              {
-                printf '%s\n\n' "O original mexeu nos mesmos lugares que esta instalação, nestes arquivos:"
-                printf '```\n%s\n```\n\n' "$outros"
-                printf '%s\n' "Nada foi alterado: o merge foi desfeito e a \`main\` está como estava. Resolver isso é trabalho de gente — depois de resolvido e empurrado, o robô volta a andar sozinho."
-              } > /tmp/aviso-conflito.md
-              gh issue create --title "$titulo" --body-file /tmp/aviso-conflito.md
-            fi
+            printf '%s' "Sincronização da ${VERSAO}: conflito que o robô não resolve" > "$AVISO_TITULO"
+            {
+              printf '%s\n\n' "O original mexeu nos mesmos lugares que esta instalação, nestes arquivos:"
+              printf '```\n%s\n```\n\n' "$outros"
+              printf '%s\n' "Nada foi alterado: o merge foi desfeito e a \`main\` está como estava. Resolver isso é trabalho de gente — depois de resolvido e empurrado, o robô volta a andar sozinho."
+            } > "$AVISO_CORPO"
             echo "parou=conflito" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
@@ -175,7 +180,6 @@ jobs:
         id: fragmento
         if: steps.juntar.outputs.parou == 'nao'
         env:
-          GH_TOKEN: ${{ github.token }}
           VERSAO: ${{ steps.alvo.outputs.versao }}
           ANTERIOR: ${{ steps.alvo.outputs.anterior }}
         run: |
@@ -186,16 +190,12 @@ jobs:
           set -e
           printf '%s\n' "$saida"
           if [ "$rc" = "3" ]; then
-            titulo="Sincronização da ${VERSAO}: precisa de uma decisão humana"
-            abertas="$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')"
-            if [ "$abertas" = "0" ]; then
-              {
-                printf '%s\n\n' "O robô juntou o código da **${VERSAO}** do original, mas não vai publicar sozinho:"
-                printf '> %s\n\n' "$saida"
-                printf '%s\n' "Nada foi empurrado — a \`main\` está como estava."
-              } > /tmp/aviso-revisao.md
-              gh issue create --title "$titulo" --body-file /tmp/aviso-revisao.md
-            fi
+            printf '%s' "Sincronização da ${VERSAO}: precisa de uma decisão humana" > "$AVISO_TITULO"
+            {
+              printf '%s\n\n' "O robô juntou o código da **${VERSAO}** do original, mas não vai publicar sozinho:"
+              printf '> %s\n\n' "$saida"
+              printf '%s\n' "Nada foi empurrado — a \`main\` está como estava."
+            } > "$AVISO_CORPO"
             echo "parou=revisao" >> "$GITHUB_OUTPUT"; exit 0
           fi
           if [ "$rc" != "0" ]; then exit "$rc"; fi
@@ -206,7 +206,6 @@ jobs:
         id: suite
         if: steps.fragmento.outputs.parou == 'nao'
         env:
-          GH_TOKEN: ${{ github.token }}
           VERSAO: ${{ steps.alvo.outputs.versao }}
         run: |
           set -euo pipefail
@@ -216,15 +215,11 @@ jobs:
           rc=$?
           set -e
           if [ "$rc" != "0" ]; then
-            titulo="Sincronização da ${VERSAO}: a suíte reprovou depois de juntar"
-            abertas="$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length')"
-            if [ "$abertas" = "0" ]; then
-              {
-                printf '%s\n\n' "Juntar a **${VERSAO}** do original com o que esta instalação acrescenta deixou a suíte vermelha. Nada foi empurrado."
-                printf '%s\n' "O log completo está na execução deste workflow, no passo que reprovou."
-              } > /tmp/aviso-suite.md
-              gh issue create --title "$titulo" --body-file /tmp/aviso-suite.md
-            fi
+            printf '%s' "Sincronização da ${VERSAO}: a suíte reprovou depois de juntar" > "$AVISO_TITULO"
+            {
+              printf '%s\n\n' "Juntar a **${VERSAO}** do original com o que esta instalação acrescenta deixou a suíte vermelha. Nada foi empurrado."
+              printf '%s\n' "O log completo está na execução deste workflow, no passo que reprovou."
+            } > "$AVISO_CORPO"
             echo "parou=suite" >> "$GITHUB_OUTPUT"; exit 0
           fi
           echo "parou=nao" >> "$GITHUB_OUTPUT"
@@ -246,3 +241,32 @@ jobs:
           git tag -a "v${nova}" -m "v${nova}"
           git push origin "v${nova}"
           echo "publicado: v${nova} (traz a ${VERSAO} do original)" >> "$GITHUB_STEP_SUMMARY"
+
+      # Único lugar que fala com o mundo. `always()` porque o aviso mais
+      # importante é justamente o de quando algo deu errado antes daqui.
+      - name: Avisar, se houver o que avisar
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          [ -f "$AVISO_TITULO" ] || { echo "nada a avisar"; exit 0; }
+          titulo="$(cat "$AVISO_TITULO")"
+
+          # O resumo da execução sempre recebe o aviso: ele não depende de
+          # permissão nenhuma e sobrevive quando a issue não sai.
+          { printf '## %s\n\n' "$titulo"; cat "$AVISO_CORPO"; } >> "$GITHUB_STEP_SUMMARY"
+
+          abertas="$(gh issue list --state open --search "in:title \"$titulo\"" --json number --jq 'length' 2>/dev/null)"
+          if [ -z "${abertas:-}" ]; then
+            echo "::error::$titulo — não consegui abrir issue (issues desabilitadas neste repositório?). O aviso está no resumo desta execução."
+            exit 1
+          fi
+          if [ "$abertas" = "0" ]; then
+            gh issue create --title "$titulo" --body-file "$AVISO_CORPO" || {
+              echo "::error::$titulo — a issue não pôde ser criada. O aviso está no resumo desta execução."
+              exit 1
+            }
+          else
+            echo "aviso já está aberto — não repito"
+          fi

@@ -159,10 +159,20 @@ describe("o fragmento que o corte de versão consome", () => {
   });
 
   it("o nome do arquivo carrega a versão, então duas sincronizações nunca colidem", () => {
-    expect(f.arquivo).toBe("versao-de-origem-1.35.0.md");
+    expect(f.arquivo).toBe("versao-de-origem-1-35-0.md");
     expect(fragmentoDeSincronizacao("1.36.0", "nada_mudou").arquivo).toBe(
-      "versao-de-origem-1.36.0.md",
+      "versao-de-origem-1-36-0.md",
     );
+  });
+
+  it("o nome é kebab-case puro — ponto no meio reprova o corte da versão", () => {
+    // `tests/unit/fragmentos-de-release.test.ts` cobra `/^[a-z0-9][a-z0-9-]*\.md$/`.
+    // Medido: com `versao-de-origem-1.40.0.md` o gate reprovou e a release não saiu.
+    for (const v of ["v1.40.0", "2.0.0", "10.11.12"]) {
+      expect(fragmentoDeSincronizacao(v, "capacidade_nova").arquivo).toMatch(
+        /^[a-z0-9][a-z0-9-]*\.md$/,
+      );
+    }
   });
 
   it("aponta para a seção em vez de reescrever o que ela diz", () => {
