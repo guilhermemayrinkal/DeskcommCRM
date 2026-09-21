@@ -71,10 +71,41 @@ function medir(el: HTMLElement): Caixa {
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
+/** O que o passeio precisa da sessão. */
+type Sessao = ReturnType<typeof useAuth>;
+
+/**
+ * A sessão, ou `null` quando não há `AuthProvider` acima.
+ *
+ * `useAuth()` lança de propósito: quem depende de sessão deve quebrar alto, em
+ * vez de seguir com um usuário inventado. O passeio não é desses — ele é um
+ * enfeite da primeira visita, e um enfeite não pode derrubar a casca.
+ *
+ * Isso não é hipótese: `tests/unit/rodape-ocupado-durante-a-chamada.test.tsx`
+ * monta o `AppShell` de verdade sem provider nenhum, mockando cada hook que lê
+ * o contexto. É o padrão deste repositório, e ele não tem como saber do nosso
+ * passeio — então quem se adapta é o passeio.
+ *
+ * O `useContext` lá dentro roda em toda renderização, sempre na mesma ordem: o
+ * `try` abafa a exceção, não pula o hook.
+ */
+function useSessaoSeHouver(): Sessao | null {
+  try {
+    return useAuth();
+  } catch {
+    return null;
+  }
+}
+
 export function TourGuiado() {
+  const sessao = useSessaoSeHouver();
+  if (!sessao) return null;
+  return <Passeio user={sessao.user} activeOrg={sessao.activeOrg} />;
+}
+
+function Passeio({ user, activeOrg }: Pick<Sessao, "user" | "activeOrg">) {
   const t = useT();
   const pathname = usePathname();
-  const { user, activeOrg } = useAuth();
   const [, startTransition] = useTransition();
 
   const passos = useMemo(
