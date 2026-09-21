@@ -8,6 +8,28 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.3.0] — 2026-09-21
+
+### Alterado
+
+- **Traz a versão 1.41.0 do sistema original** Esta versão junta o que o sistema original publicou na 1.41.0 com o que
+  esta instalação acrescenta por conta própria. O que mudou lá está escrito na
+  seção **1.41.0** deste mesmo changelog, logo abaixo, por quem fez as
+  mudanças.
+
+  Nada a configurar: a atualização é a de sempre.
+
+### Corrigido
+
+- **O passeio guiado some em silêncio quando não há sessão** O passeio é desenhado dentro da casca do aplicativo e lia a sessão de um jeito
+  que estourava quando não havia nenhuma acima dele. Em uso normal isso nunca
+  acontece — dentro do `/app` sempre há sessão. Aparece em teste, onde a casca é
+  montada sozinha de propósito.
+
+  Agora, sem sessão, o passeio simplesmente não se desenha. Para quem usa o
+  sistema nada muda: ele continua abrindo no primeiro acesso e por "Conhecer o
+  sistema", no menu do perfil.
+
 ## [2.2.1] — 2026-09-19
 
 ### Corrigido
@@ -7116,7 +7138,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.1...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.0.0...v2.1.0
