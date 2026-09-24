@@ -8,6 +8,35 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.6.0] — 2026-09-24
+
+### Alterado
+
+- **Traz a versão 1.47.0 do sistema original** Esta versão junta o que o sistema original publicou na 1.47.0 com o que
+  esta instalação acrescenta por conta própria. O que mudou lá está escrito na
+  seção **1.47.0** deste mesmo changelog, logo abaixo, por quem fez as
+  mudanças.
+
+  Nada a configurar: a atualização é a de sempre.
+
+### Corrigido
+
+- **O aviso de mensagem retida na conversa mostra o que vale agora e de qual cidade é o horário** O aviso de "mensagem retida" na conversa continuava na tela depois de a mensagem ter saído, e o "fora do horário de envio" seguia aparecendo com o horário já aberto. Agora o aviso some quando uma resposta já saiu depois da retenção e quando o horário de envio está aberto, porque o próximo atendimento já vai reavaliar. O horário também passa a dizer de qual cidade é ("7h–22h, horário de Manaus"), para quem está em outro fuso não ler um horário que não é o seu. Crédito: @bonito-system.
+
+- **A reconciliação do Vitest ensina a checar Failed Suites antes de alertar sonda cega** Documentação interna em `CLAUDE.md`, para quem desenvolve: o Vitest imprime erros de coleta de arquivo e timeouts de hooks na seção dedicada `Failed Suites`, que soma linhas `FAIL` sem aparecer no rodapé `Tests N failed`.
+
+  A doutrina agora ensina a ler `Failed Suites` no log antes de sugerir re-rodar a suíte com `--reporter=verbose`. Nada muda para quem opera uma instalação.
+
+  Contribuição de @webtecnica.
+
+- **Invariante garante que a configuração de SMTP da instalação é estritamente server-side** Adiciona o teste de invariante `tests/invariants/configuracao-de-smtp-e-server-side.test.ts` para a tabela `platform_smtp_settings`, espelhando a proteção de suas irmãs (`platform_meta_app`, `platform_google_oauth`).
+
+  O teste afere privilégios revocados para `anon` e `authenticated`, permissão estrita ao `service_role`, ativação de RLS sem policies públicas, isolamento da senha criptografada via `fn_encrypt_oauth`/`fn_decrypt_oauth` e garantia de integridade do singleton.
+
+  Contribuição de @webtecnica.
+
+- **O agente usa o modelo do número da conversa, não o de outro canal com o mesmo nome** Quando a organização tem o WhatsApp oficial da Meta e um canal parceiro com um modelo de mensagem de mesmo nome e idioma, o agente de IA podia montar e conferir o texto do modelo do outro número antes de enviar. Agora ele usa a mesma regra do envio pela tela: a definição do próprio número e, no canal oficial, a da conta desse número. Crédito: @bonito-system.
+
 ## [2.5.0] — 2026-09-24
 
 ### Alterado
@@ -7914,7 +7943,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.5.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.2.1...v2.3.0
