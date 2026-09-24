@@ -2843,6 +2843,7 @@ export const DICIONARIO: Traducoes = {
   "a cada 100": { es: "por cada 100" },
   "a maioria responde em": { es: "la mayoría responde en" },
   "agora usa": { es: "ahora usa" },
+  "anotado pelo agente": { es: "anotado por el agente" },
   "aprendido automaticamente": { es: "aprendido automáticamente" },
   ativa: { es: "activa" },
   "atualizada em": { es: "actualizada el" },
@@ -5364,6 +5365,21 @@ export const DICIONARIO: Traducoes = {
     es: "La transferencia es inmediata: el asesor elegido pasa a ser el responsable y el cambio queda registrado en el historial.",
   },
   "Transferir para": { es: "Transferir a" },
+  "Continuar pelo número": { es: "Continuar por el número" },
+  "Continuar por este número": { es: "Continuar por este número" },
+  "O cliente passa a receber as mensagens pelo número escolhido. Se a conversa lá estiver livre, você fica como responsável. O histórico deste número continua nesta conversa.": {
+    es: "El cliente pasa a recibir los mensajes por el número elegido. Si la conversación allí está libre, tú quedas como responsable. El historial de este número sigue en esta conversación.",
+  },
+  "Este contato não tem telefone salvo, então não dá para falar com ele por outro número.": {
+    es: "Este contacto no tiene teléfono guardado, así que no se le puede hablar por otro número.",
+  },
+  "A conversa neste número está com": { es: "La conversación en este número está con" },
+  "outro atendente": { es: "otro agente" },
+  "Atendimento continua pelo outro número.": { es: "La atención sigue por el otro número." },
+  "O número desta conversa não está conectado.": {
+    es: "El número de esta conversación no está conectado.",
+  },
+  "Responder por outro número": { es: "Responder por otro número" },
   "Carregando atendentes…": { es: "Cargando asesores…" },
   "Nenhum outro atendente disponível nesta organização.": {
     es: "No hay ningún otro asesor disponible en esta organización.",
@@ -5399,6 +5415,19 @@ export const DICIONARIO: Traducoes = {
   "link da imagem": { es: "enlace de la imagen" },
   "Salvar este link no modelo": { es: "Guardar este enlace en la plantilla" },
   "já há um link salvo": { es: "ya hay un enlace guardado" },
+  "Link salvo no modelo.": { es: "Enlace guardado en la plantilla." },
+  "Link removido do modelo.": { es: "Enlace eliminado de la plantilla." },
+  "Remover link": { es: "Quitar enlace" },
+  "Salvar link": { es: "Guardar enlace" },
+  "Link salvo: o painel do modelo na conversa já vem preenchido com ele.": {
+    es: "Enlace guardado: el panel de la plantilla en la conversación ya viene completado con él.",
+  },
+  "Link público (https) do arquivo. Salvo aqui, o painel do modelo na conversa já vem preenchido.": {
+    es: "Enlace público (https) del archivo. Guardado aquí, el panel de la plantilla en la conversación ya viene completado.",
+  },
+  "Use um link público que comece com https://": {
+    es: "Usa un enlace público que empiece con https://",
+  },
   "O modelo saiu, mas não consegui salvar o link nele.": {
     es: "La plantilla se envió, pero no pude guardar el enlace en ella.",
   },
@@ -5761,7 +5790,7 @@ export const DICIONARIO: Traducoes = {
   "Seu atendente foi criado, mas ficou como": { es: "Tu agente se creó, pero quedó como" },
   "rascunho": { es: "borrador" },
   "— ele ainda não tem com o que pensar.": { es: "— todavía no tiene con qué pensar." },
-  "Não achei chave de": { es: "No encontré ninguna clave de" },
+  "Não achei chave": { es: "No encontré ninguna clave" },
   "nem cadastrada aqui, nem vinda da instalação. Cole a chave no campo acima («o cérebro dele») e crie o atendente de novo — ou cadastre em": {
     es: "ni registrada aquí ni incluida con la instalación. Pega la clave en el campo de arriba («su cerebro») y vuelve a crear el agente, o regístrala en",
   },
@@ -8523,6 +8552,26 @@ export const DICIONARIO: Traducoes = {
   "Produto reativado": { es: "Producto reactivado" },
   "Não consegui ler essa planilha.": { es: "No pude leer esa hoja de cálculo." },
   "Não consegui enviar o arquivo.": { es: "No pude enviar el archivo." },
+  // As fotos do produto (migration 0390).
+  "Fotos": { es: "Fotos" },
+  "foto": { es: "foto" },
+  "A primeira foto é a capa. O atendente de IA manda as fotos nesta ordem quando apresenta o produto.": {
+    es: "La primera foto es la portada. El asistente de IA envía las fotos en este orden cuando presenta el producto.",
+  },
+  "Sem prévia": { es: "Sin vista previa" },
+  "Mover a foto para a esquerda": { es: "Mover la foto a la izquierda" },
+  "Mover a foto para a direita": { es: "Mover la foto a la derecha" },
+  "Remover a foto": { es: "Quitar la foto" },
+  "Adicionar foto": { es: "Agregar foto" },
+  "JPG ou PNG, até 5 MB. No máximo 5 fotos.": { es: "JPG o PNG, hasta 5 MB. Máximo 5 fotos." },
+  "Foto adicionada": { es: "Foto agregada" },
+  "Não consegui enviar a foto.": { es: "No pude enviar la foto." },
+  "Ordem das fotos salva": { es: "Orden de las fotos guardado" },
+  "Foto removida": { es: "Foto quitada" },
+  "Cada produto tem no máximo 5 fotos.": { es: "Cada producto tiene como máximo 5 fotos." },
+  "A foto precisa ter até 5 MB.": { es: "La foto debe tener hasta 5 MB." },
+  "A foto precisa ser JPG ou PNG.": { es: "La foto debe ser JPG o PNG." },
+  "As fotos mudaram. Recarregue a página.": { es: "Las fotos cambiaron. Recarga la página." },
   "Preço inválido. Escreva assim: 5.499,00": { es: "Precio inválido. Escríbelo así: 5.499,00" },
   "Custo inválido.": { es: "Costo inválido." },
   "novos": { es: "nuevos" },
@@ -11570,6 +11619,36 @@ export const DICIONARIO: Traducoes = {
   "Conecte um banco de dados de outro sistema para o agente consultar em tempo real.": {
     es: "Conecta una base de datos de otro sistema para que el agente la consulte en tiempo real.",
   },
+  // ─── Editor de skill, histórico e restauração (recorte do #1130, @vgamkt) ───
+  "Informe pelo menos uma palavra-chave de ativação.": { es: "Indica al menos una palabra clave de activación." },
+  "A descrição é obrigatória.": { es: "La descripción es obligatoria." },
+  "O corpo da skill não pode ficar vazio.": { es: "El cuerpo de la skill no puede quedar vacío." },
+  "Linhas no corpo": { es: "Líneas en el cuerpo" },
+  "atualizada — já vale para os agentes.": { es: "actualizada: ya vale para los agentes." },
+  "Editar skill": { es: "Editar skill" },
+  "Salvar cria uma versão nova (a antiga fica no histórico). O corpo só entra na conversa quando uma das palavras-chave aparece na mensagem do cliente.": {
+    es: "Guardar crea una versión nueva (la anterior queda en el historial). El cuerpo solo entra en la conversación cuando una de las palabras clave aparece en el mensaje del cliente.",
+  },
+  "Não foi possível carregar a skill.": { es: "No se pudo cargar la skill." },
+  "Esta skill veio de um pacote com arquivos. Para mudar o texto, edite o pacote e envie o .zip de novo.": {
+    es: "Esta skill vino de un paquete con archivos. Para cambiar el texto, edita el paquete y vuelve a enviar el .zip.",
+  },
+  "Descrição (aparece no índice do agente)": { es: "Descripción (aparece en el índice del agente)" },
+  "Palavras-chave de ativação (separe por vírgula)": { es: "Palabras clave de activación (separadas por coma)" },
+  "consulta, horário, preço": { es: "consulta, horario, precio" },
+  "A skill é carregada quando o cliente escreve uma destas palavras.": {
+    es: "La skill se carga cuando el cliente escribe una de estas palabras.",
+  },
+  "Corpo (o procedimento que o agente segue)": { es: "Cuerpo (el procedimiento que sigue el agente)" },
+  linhas: { es: "líneas" },
+  "em uso": { es: "en uso" },
+  "Versão restaurada.": { es: "Versión restaurada." },
+  Restaurar: { es: "Restaurar" },
+  "Use Editar para ajustar o texto de uma skill instalada — cada salvamento cria uma versão nova e a anterior fica no histórico. Também dá para reenviar um .zip com o mesmo nome; a sua versão passa a valer no lugar da do catálogo.": {
+    es: "Usa Editar para ajustar el texto de una skill instalada: cada guardado crea una versión nueva y la anterior queda en el historial. También puedes volver a enviar un .zip con el mismo nombre; tu versión pasa a valer en lugar de la del catálogo.",
+  },
+  "Versão não encontrada para esta skill.": { es: "No se encontró esa versión para esta skill." },
+  "Versão da skill não encontrada.": { es: "No se encontró la versión de la skill." },
 };
 
 /**
