@@ -8,6 +8,17 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.8.0] — 2026-09-25
+
+### Alterado
+
+- **Traz a versão 1.49.0 do sistema original** Esta versão junta o que o sistema original publicou na 1.49.0 com o que
+  esta instalação acrescenta por conta própria. O que mudou lá está escrito na
+  seção **1.49.0** deste mesmo changelog, logo abaixo, por quem fez as
+  mudanças.
+
+  Nada a configurar: a atualização é a de sempre.
+
 ## [2.7.0] — 2026-09-25
 
 ### Adicionado
@@ -8237,7 +8248,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.7.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.8.0...HEAD
+[2.8.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.4.0...v2.5.0
