@@ -8,6 +8,27 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 ## [Não lançado]
 
+## [2.7.0] — 2026-09-25
+
+### Adicionado
+
+- **Link direto para cada conversa da Inbox** Ao abrir uma conversa, o endereço da Inbox passa a incluir o identificador dela. O atendente pode copiar esse link para a equipe; quem tiver acesso à conversa abre o mesmo atendimento, mesmo que ele esteja fora do filtro atual. Crédito: @raphaelmartins.
+
+### Alterado
+
+- **Traz a versão 1.48.0 do sistema original** Esta versão junta o que o sistema original publicou na 1.48.0 com o que
+  esta instalação acrescenta por conta própria. O que mudou lá está escrito na
+  seção **1.48.0** deste mesmo changelog, logo abaixo, por quem fez as
+  mudanças.
+
+  Nada a configurar: a atualização é a de sempre.
+
+### Corrigido
+
+- **O agente espera a foto ficar legível quando o cliente manda a foto e depois escreve** Quando o cliente mandava uma foto (um comprovante, por exemplo) e logo depois escrevia a pergunta em outra mensagem, o turno do agente saía pela mensagem de texto sem esperar a leitura da foto, e o agente pedia ao cliente que descrevesse uma imagem que o sistema terminava de ler segundos depois. Agora a espera olha a conversa inteira: se há mídia recebida ainda sendo lida, o turno aguarda até o mesmo teto de antes, contado a partir da hora em que a mídia chegou. Mídia que o sistema não vai ler (vídeo com leitura desligada, arquivo que não chegou ao storage) não segura a resposta.
+
+  Contribuição de @deskcommopp4s-cmd (#1594).
+
 ## [2.6.0] — 2026-09-24
 
 ### Alterado
@@ -8170,7 +8191,8 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.6.0...HEAD
+[Não lançado]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/guilhermemayrinkal/DeskcommCRM/compare/v2.3.0...v2.4.0
