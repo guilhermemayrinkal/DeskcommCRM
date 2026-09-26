@@ -2218,9 +2218,9 @@ export const DICIONARIO: Traducoes = {
   "Agent ativo": { es: "Agente activo" },
   "read-only — gerenciado pelo backend": { es: "solo lectura — gestionado por el backend" },
   "Janela de contexto (msgs, 1–50)": { es: "Ventana de contexto (msgs, 1–50)" },
-  "Top K = quantos trechos buscar. Similarity threshold = mínimo de relevância (cosine). Confidence = limiar abaixo do qual o agent escala para humano.":
+  "Top K = quantos trechos buscar. Similarity threshold = mínimo de relevância (cosine).":
     {
-      es: "Top K = cuántos fragmentos buscar. Similarity threshold = relevancia mínima (cosine). Confidence = umbral por debajo del cual el agente escala a un humano.",
+      es: "Top K = cuántos fragmentos buscar. Similarity threshold = relevancia mínima (cosine).",
     },
   "Chaves de acesso à IA": { es: "Claves de acceso a la IA" },
   "A conta de inteligência artificial é sua: você contrata direto com {provedores} e cola a chave aqui. A chave fica guardada criptografada e nunca mais aparece na tela depois de salva — nem para você. O Jev (TypeSafe) não conversa com o cliente: a chave dele serve só para decisões rápidas.": {
@@ -4420,6 +4420,11 @@ export const DICIONARIO: Traducoes = {
   "Quando entrar um contato novo (webhook)": { es: "Cuando entre un contacto nuevo (webhook)" },
   "Quando um lead mudar de etapa": { es: "Cuando un lead cambie de etapa" },
   "Quando chegar mensagem no WhatsApp": { es: "Cuando llegue un mensaje por WhatsApp" },
+  "Quando uma mensagem não for entregue": { es: "Cuando un mensaje no se entregue" },
+  "Código do erro": { es: "Código del error" },
+  "Janela de 24 horas fechada: texto livre é recusado pela plataforma (131047). Envie um modelo aprovado ou aguarde o cliente escrever.": {
+    es: "Ventana de 24 horas cerrada: la plataforma rechaza el texto libre (131047). Envía una plantilla aprobada o espera a que el cliente escriba.",
+  },
   "Quando um lead ganhar uma tag": { es: "Cuando un lead reciba una etiqueta" },
   "Quando um contato ganhar uma tag": { es: "Cuando un contacto reciba una etiqueta" },
   "alterado pelo assistente": { es: "cambiado por el asistente" },
@@ -4900,6 +4905,9 @@ export const DICIONARIO: Traducoes = {
   "Criar e editar leads": { es: "Crear y editar leads" },
   "Ler mensagens": { es: "Leer mensajes" },
   "Enviar mensagens": { es: "Enviar mensajes" },
+  "Integração pode enviar em nome de um atendente": {
+    es: "La integración puede enviar en nombre de un asesor",
+  },
   "Ler o log de auditoria": { es: "Leer el registro de auditoría" },
   // ─── Configurações: Distribuição de atendimento ───
   "Distribuição de atendimento salva.": { es: "Distribución de atención guardada." },
@@ -6608,6 +6616,17 @@ export const DICIONARIO: Traducoes = {
   "Atividade registrada": { es: "Actividad registrada" },
   "Você/time": { es: "Tú/equipo" },
   "Sistema": { es: "Sistema" },
+  // #1613 — autoria "em nome de" no balão e os recusos da rota.
+  "via": { es: "vía" },
+  "Envio em nome de outro usuário exige o escopo messages:on_behalf.": {
+    es: "El envío en nombre de otro usuario requiere el alcance messages:on_behalf.",
+  },
+  "on_behalf_of_user_id precisa apontar para um atendente ativo desta organização.": {
+    es: "on_behalf_of_user_id debe apuntar a un asesor activo de esta organización.",
+  },
+  "Não foi possível ler o membro apontado em on_behalf_of_user_id.": {
+    es: "No fue posible leer el miembro indicado en on_behalf_of_user_id.",
+  },
   "Autor não registrado": { es: "Autor no registrado" },
 
   // ─── Contacts: lista, ficha, timeline, LGPD ───
@@ -7006,6 +7025,8 @@ export const DICIONARIO: Traducoes = {
   },
   "Anterior": { es: "Anterior" },
   "Próxima": { es: "Siguiente" },
+  "Aba anterior": { es: "Pestaña anterior" },
+  "Próxima aba": { es: "Pestaña siguiente" },
   "solicitação crítica": { es: "solicitud crítica" },
   "solicitações críticas": { es: "solicitudes críticas" },
   "SLA vencido ou inferior a 2 dias. Ação imediata requerida.": {
@@ -7426,6 +7447,28 @@ export const DICIONARIO: Traducoes = {
   },
   "Com isto ligado, a única porta de entrada é o convite — inclusive para você, se um dia precisar de uma conta nova. Convide pela tela de Equipe antes de precisar.": {
     es: "Con esto activado, la única puerta de entrada es la invitación, incluso para ti si algún día necesitas una cuenta nueva. Invita desde la pantalla de Equipo antes de que haga falta.",
+  },
+  // ── Aviso da troca que ainda não chegou ao GoTrue (issue #1668) ───────────
+  "A troca de modo ainda não chegou ao servidor.": {
+    es: "El cambio de modo aún no llegó al servidor.",
+  },
+  "A troca só vale para o cadastro direto depois da próxima atualização do servidor: o CRM já segue o modo novo, mas o GoTrue da VPS continua com o modo anterior. Esta tela só avisa — nada é corrigido aqui.": {
+    es: "El cambio solo vale para el registro directo después de la próxima actualización del servidor: el CRM ya sigue el modo nuevo, pero el GoTrue del VPS sigue con el modo anterior. Esta pantalla solo avisa: aquí no se corrige nada.",
+  },
+  "Para aplicar agora, rode isto na VPS:": {
+    es: "Para aplicar ahora, ejecuta esto en el VPS:",
+  },
+  "Com o Supabase separado, o cadastro direto não acompanha a troca sozinho: o CRM já segue o modo novo, mas o Supabase continua com o modo anterior. Esta tela só avisa — nada é corrigido aqui.": {
+    es: "Con Supabase separado, el registro directo no acompaña el cambio por sí solo: el CRM ya sigue el modo nuevo, pero Supabase sigue con el modo anterior. Esta pantalla solo avisa: aquí no se corrige nada.",
+  },
+  'No painel do Supabase, em Authentication → Sign In / Up, desligue "Allow new users to sign up".': {
+    es: 'En el panel de Supabase, en Authentication → Sign In / Up, desactiva "Allow new users to sign up".',
+  },
+  'No painel do Supabase, em Authentication → Sign In / Up, ligue "Allow new users to sign up".': {
+    es: 'En el panel de Supabase, en Authentication → Sign In / Up, activa "Allow new users to sign up".',
+  },
+  "Em GoTrue próprio, a chave equivalente é:": {
+    es: "En un GoTrue propio, la clave equivalente es:",
   },
   "Não deu para salvar. Tente de novo em instantes.": {
     es: "No se pudo guardar. Inténtalo de nuevo en unos instantes.",
@@ -9858,8 +9901,8 @@ export const DICIONARIO: Traducoes = {
   "Lista os compromissos com hora marcada de um cliente ou de um dia, com a situação de cada um: marcado, realizado ou desmarcado.": {
     es: "Lista los compromisos con fecha y hora de un cliente o de un día, con el estado de cada uno: programado, realizado o cancelado.",
   },
-  "Lista os textos que a empresa já escreveu para responder as situações de sempre, com o atalho de cada um.": {
-    es: "Lista los textos que la empresa ya escribió para responder a las situaciones de siempre, con el atajo de cada uno.",
+  "Lista os textos que a empresa compartilhou com a equipe para responder as situações de sempre, com o atalho de cada um e as variáveis que cada texto usa.": {
+    es: "Lista los textos que la empresa compartió con el equipo para responder a las situaciones de siempre, con el atajo de cada uno y las variables que usa cada texto.",
   },
   "Listar conversas": { es: "Listar conversaciones" },
   "Lê as mensagens já trocadas com o cliente, para o agente responder sem pedir que ele repita o que já contou.": {
@@ -9936,8 +9979,8 @@ export const DICIONARIO: Traducoes = {
   "Passa a conversa para um atendente, transfere para outra pessoa ou devolve o cliente para a fila de espera.": {
     es: "Pasa la conversación a un asesor, la transfiere a otra persona o devuelve al cliente a la fila de espera.",
   },
-  "Pega uma resposta pronta e troca as lacunas pelos dados do cliente, avisando se sobrou alguma sem preencher. Não envia nada.": {
-    es: "Toma una respuesta predefinida y reemplaza los espacios en blanco por los datos del cliente, y avisa si quedó alguno sin llenar. No envía nada.",
+  "Pega uma resposta pronta e troca as lacunas pelos dados do cliente e pelos valores que o sistema de fora informar, avisando se sobrou alguma sem preencher. Não envia nada.": {
+    es: "Toma una respuesta predefinida y reemplaza los espacios en blanco por los datos del cliente y por los valores que informe el sistema externo, y avisa si quedó alguno sin llenar. No envía nada.",
   },
   "Preencher uma resposta pronta": { es: "Completar una respuesta predefinida" },
   "Privacidade e dados do cliente": { es: "Privacidad y datos del cliente" },
