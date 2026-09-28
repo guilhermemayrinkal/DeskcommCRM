@@ -210,7 +210,20 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          pnpm typecheck && pnpm lint && pnpm lint:channels && pnpm lint:role-rank \
+          # O `pnpm install` lá de cima rodou ANTES do merge: ele instalou as
+          # dependências da versão que já estava aqui. Se a versão que acabou de
+          # entrar acrescenta uma biblioteca, ela não está no disco, e o
+          # typecheck reprova por falta de algo que o original tem.
+          #
+          # Não é hipótese: de 22/09 a 28/09/2026 o robô parou em SETE versões
+          # seguidas (1.52.0 → 1.58.0), todas no mesmo erro — TS7016, sem o
+          # `@types/jsdom` que o autor passou a usar. Sete issues idênticas.
+          #
+          # Por isso o install se repete DEPOIS do merge, e dentro deste passo:
+          # se o lockfile mesclado não bater, isso é uma reprovação como outra
+          # qualquer — vira aviso e issue, em vez de matar o job com erro cru.
+          pnpm install --frozen-lockfile \
+            && pnpm typecheck && pnpm lint && pnpm lint:channels && pnpm lint:role-rank \
             && pnpm test:unit && pnpm test:shell
           rc=$?
           set -e
