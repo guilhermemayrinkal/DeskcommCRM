@@ -241,6 +241,7 @@ jobs:
         if: steps.suite.outputs.parou == 'nao'
         env:
           VERSAO: ${{ steps.alvo.outputs.versao }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           pnpm exec tsx scripts/cortar-release.ts --escrever
@@ -253,6 +254,35 @@ jobs:
           git push origin HEAD:main
           git tag -a "v${nova}" -m "v${nova}"
           git push origin "v${nova}"
+
+          # A RELEASE, e não só a tag. `ultima_release_estavel()` (no
+          # `_common.sh`) pergunta a `releases/latest` da API do GitHub e trata
+          # resposta vazia como "não sei" — de propósito, para nunca dizer "você
+          # está em dia" por silêncio. Uma tag sem release é invisível para ela.
+          #
+          # Medido em 28/09/2026: este fork tinha 11 tags e ZERO releases. Até a
+          # 2.3.0 o kit lia a maior tag e funcionava por acidente; a 2.10.0
+          # trouxe a regra nova do original e a tela passou a dizer "Não consegui
+          # checar se há versão nova" — com a 2.11.0 publicada e invisível.
+          #
+          # Não dispara build: `publish-image.yml` reage a `push: tags`, e o
+          # gatilho `release:` é proibido lá por teste. Anunciar antes da imagem
+          # ficar pronta também não é problema: o agente do host confere se a
+          # imagem do app existe (`veredito_da_imagem_do_app`) e cala quando não.
+          # `nova` é variável de shell; o script lê do AMBIENTE — sem o export
+          # ele receberia string vazia e não acharia seção nenhuma.
+          export NOVA="$nova"
+          pnpm exec tsx -e '
+            import fs from "node:fs";
+            import { extractChangelogSection } from "./lib/system/changelog";
+            const v = process.env.NOVA ?? "";
+            const s = extractChangelogSection(fs.readFileSync("CHANGELOG.md", "utf8"), v);
+            if (!s) { console.error(`seção [${v}] não achada no CHANGELOG`); process.exit(1); }
+            const atencao = s.requiresAttention ? `### ⚠️ Requer atenção\n\n${s.requiresAttention}\n\n` : "";
+            fs.writeFileSync("/tmp/notas.md", atencao + s.body);
+          '
+          gh release create "v${nova}" --title "v${nova}" --notes-file /tmp/notas.md
+
           echo "publicado: v${nova} (traz a ${VERSAO} do original)" >> "$GITHUB_STEP_SUMMARY"
 
       # Único lugar que fala com o mundo. `always()` porque o aviso mais
