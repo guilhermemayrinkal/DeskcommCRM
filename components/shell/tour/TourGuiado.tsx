@@ -278,6 +278,18 @@ function Passeio({ user, activeOrg }: Pick<Sessao, "user" | "activeOrg">) {
   const total = passos.length;
   const tituloId = `tour-passo-${passo.id}`;
 
+  // Os itens do passo são CHAVES do dicionário, não texto que alguém digitou:
+  // vêm do registro de navegação (`d.label`) e da curadoria de
+  // `o-que-mais-existe` — literais do código, os mesmos que o menu mostra.
+  //
+  // Viram objeto por causa da cerca `i18n-espanhol-cobre-a-tela`, que olha a
+  // FORMA da chamada: ela recusa `t(x)` quando `x` é parâmetro de função ou
+  // variável solta, porque aí não tem como provar pela sintaxe que o valor não
+  // é dado do operador — e traduzir dado do operador mudaria o que a pessoa
+  // digitou na tela. Acesso a propriedade ela aceita, e é como a barra lateral
+  // já traduz estes mesmos rótulos: `t(item.label)`, em `Sidebar.tsx`.
+  const itensDoPasso = (passo.itens ?? []).map((chave) => ({ chave }));
+
   return createPortal(
     <>
       {alvo ? (
@@ -342,12 +354,12 @@ function Passeio({ user, activeOrg }: Pick<Sessao, "user" | "activeOrg">) {
           {t(passo.titulo)}
         </h2>
         <p className="text-sm text-muted-foreground">{t(passo.texto)}</p>
-        {passo.itens && passo.itens.length > 0 && (
+        {itensDoPasso.length > 0 && (
           <ul className="space-y-1.5 text-sm text-muted-foreground">
-            {passo.itens.map((item) => (
-              <li key={item} className="flex gap-2">
+            {itensDoPasso.map((item) => (
+              <li key={item.chave} className="flex gap-2">
                 <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70" />
-                <span>{t(item)}</span>
+                <span>{t(item.chave)}</span>
               </li>
             ))}
           </ul>
